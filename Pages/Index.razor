@@ -1,7 +1,53 @@
 ﻿@page "/"
 
-<PageTitle>Index</PageTitle>
+<div class="container">
+    @foreach(MenuItem menuItem in menuItems)
+    {
+        <div class="row">
+            <div class="col-9">
+                @menuItem.Description
+            </div>
+            <div class="col-3">
+                @menuItem.Price
+            </div>
+        </div>
+    }
+    <div class="row justify-content-center">
+        <div class="col-6">
+            <string>Add guacamole for @guacamolePriceText</string>
+        </div>
+    </div>
+</div>
 
-<h1>Hello, world!</h1>
+@code {
+    // Default menu Variable
+    MenuItem[] menuItems = new MenuItem[5]; // Create array to store menu items
+    MenuOptions defaultMenu = new MenuOptions(); // Create default menu
+    string[] bagelSandwiches = { "plain bages", "onion bagel", "pumpernickel bagel", "everything bagel" }; // Bread options for custom menu
+    MenuOptions customMenu ; // Custom menu
+    int howManyCustom = 2; // How many menu items from custom menus.
+    decimal guacamolePrice; // Price for adding guacamole
+    string guacamolePriceText = "$0.59"; // Formatted string for guacamole price
 
-Welcome to your new app.
+    protected override void OnInitialized()
+    {
+        // Create custom menu
+        customMenu = new MenuOptions(MenuOptions.DefaultProteins, MenuOptions.DefaultCondiments, bagelSandwiches); // Create custom menu
+
+        // Create menu items from default menu
+        for (int i = 0; i < menuItems.Length - howManyCustom; i++)
+        {
+            menuItems[i] = new MenuItem(defaultMenu);
+        }
+
+        // Create menu items from custom menus
+        for (int i = menuItems.Length - howManyCustom; i < menuItems.Length; i++)
+        {
+            menuItems[i] = new MenuItem(customMenu);
+        }
+
+        // Calculate and set guacamole price.
+        guacamolePrice = MenuItem.GenerateMenuItemPrice();
+        guacamolePriceText = guacamolePrice.ToString("c");
+    }
+}
